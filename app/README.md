@@ -1,5 +1,7 @@
 # Clearswap
 
+> **Continuing this work in a new session?** Start with [HANDOFF.md](HANDOFF.md) — it covers what is verified versus unproven, the decisions that must not be casually reverted, and what is outstanding. Product strategy is in [docs/proof-of-cost.html](docs/proof-of-cost.html).
+
 A crypto trading interface built on two ideas:
 
 1. **You should be able to see every cost of a trade before you sign it** — including the large one that almost no interface shows, which is hidden inside the price rather than charged as a fee.
