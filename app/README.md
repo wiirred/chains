@@ -75,10 +75,20 @@ Chains that fail to respond are reported as **failed**, not as zero. "You have n
 
 ## Where the data comes from
 
-- **Chains, RPC endpoints, explorers** — this repository's own `_data/chains` dataset. `scripts/build-chain-registry.mjs` compiles it into two files at build time: a core set of ~29 routable chains bundled eagerly, and the full 2,300-chain registry loaded on demand. Deprecated chains are excluded (a reused chain ID is exactly the ambiguity you should never route money through), as are RPCs with unfilled API-key placeholders.
+- **Chains, RPC endpoints, explorers** — the [ethereum-lists/chains](https://github.com/ethereum-lists/chains) dataset. `scripts/build-chain-registry.mjs` compiles it into two files at build time: a core set of ~29 routable chains bundled eagerly, and the full 2,300-chain registry loaded on demand. Deprecated chains are excluded (a reused chain ID is exactly the ambiguity you should never route money through), as are RPCs with unfilled API-key placeholders.
 - **Routing, quotes, prices** — the [LI.FI](https://li.fi) aggregator, chosen because it quotes same-chain swaps and cross-chain routes through one endpoint and returns *itemised* `feeCosts` and `gasCosts` rather than a single net number. Without itemisation there is no ledger to build.
 
 Because the registry supplies RPC URLs and explorer links for every chain in the dataset, the app can add an unfamiliar network to a wallet (`wallet_addEthereumChain`) and link receipts to a real explorer without hardcoding anything.
+
+### Moving this app to another repository
+
+`app/` has no dependency on the surrounding repository at runtime, and only a soft one at build time. The registry generator looks for the dataset in this order:
+
+1. `$CHAINS_DATA_DIR` — an explicit path to a checkout of `ethereum-lists/chains`
+2. `../_data/chains` — a sibling checkout, which is how it resolves inside this repo
+3. `vendor/chains.core.json` — a committed snapshot, always present
+
+So `app/` can be copied into any other project and will build with no extra setup. Falling back to the snapshot costs the long tail of chains, not correctness: trading still works on every routable network, the app just knows fewer obscure ones for explorer links and wallet network-adding. Point `CHAINS_DATA_DIR` at a checkout to get all 2,300 back, and the snapshot refreshes itself automatically whenever the real dataset is available.
 
 ## Receipts
 

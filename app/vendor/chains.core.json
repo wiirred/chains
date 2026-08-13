@@ -1,0 +1,539 @@
+[
+  {
+    "chainId": 1,
+    "name": "Ethereum Mainnet",
+    "shortName": "eth",
+    "rpcs": [
+      "https://api.mycryptoapi.com/eth",
+      "https://cloudflare-eth.com",
+      "https://ethereum-rpc.publicnode.com",
+      "https://mainnet.gateway.tenderly.co"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "etherscan",
+      "url": "https://etherscan.io"
+    }
+  },
+  {
+    "chainId": 10,
+    "name": "OP Mainnet",
+    "shortName": "oeth",
+    "rpcs": [
+      "https://mainnet.optimism.io",
+      "https://optimism-rpc.publicnode.com",
+      "https://optimism.gateway.tenderly.co",
+      "https://optimism.drpc.org"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "etherscan",
+      "url": "https://optimistic.etherscan.io"
+    }
+  },
+  {
+    "chainId": 56,
+    "name": "BNB Smart Chain Mainnet",
+    "shortName": "bnb",
+    "rpcs": [
+      "https://bsc-dataseed1.bnbchain.org",
+      "https://bsc-dataseed2.bnbchain.org",
+      "https://bsc-dataseed3.bnbchain.org",
+      "https://bsc-dataseed4.bnbchain.org"
+    ],
+    "nativeCurrency": {
+      "name": "BNB Chain Native Token",
+      "symbol": "BNB",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "bscscan",
+      "url": "https://bscscan.com"
+    }
+  },
+  {
+    "chainId": 100,
+    "name": "Gnosis",
+    "shortName": "gno",
+    "rpcs": [
+      "https://rpc.gnosischain.com",
+      "https://rpc.gnosis.gateway.fm",
+      "https://rpc.ankr.com/gnosis",
+      "https://gnosischain-rpc.gateway.pokt.network"
+    ],
+    "nativeCurrency": {
+      "name": "xDAI",
+      "symbol": "XDAI",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "gnosisscan",
+      "url": "https://gnosisscan.io"
+    }
+  },
+  {
+    "chainId": 130,
+    "name": "Unichain",
+    "shortName": "unichain",
+    "rpcs": [
+      "https://mainnet.unichain.org",
+      "https://unichain-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Unichain Mainnet Explorer",
+      "url": "https://uniscan.xyz"
+    }
+  },
+  {
+    "chainId": 137,
+    "name": "Polygon Mainnet",
+    "shortName": "pol",
+    "rpcs": [
+      "https://polygon.drpc.org",
+      "https://rpc-mainnet.matic.quiknode.pro",
+      "https://polygon-bor-rpc.publicnode.com",
+      "https://polygon.gateway.tenderly.co"
+    ],
+    "nativeCurrency": {
+      "name": "POL",
+      "symbol": "POL",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "polygonscan",
+      "url": "https://polygonscan.com"
+    }
+  },
+  {
+    "chainId": 146,
+    "name": "Sonic Mainnet",
+    "shortName": "sonic",
+    "rpcs": [
+      "https://rpc.soniclabs.com",
+      "https://sonic-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Sonic",
+      "symbol": "S",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "etherscan",
+      "url": "https://sonicscan.org"
+    }
+  },
+  {
+    "chainId": 169,
+    "name": "Manta Pacific Mainnet",
+    "shortName": "manta",
+    "rpcs": [
+      "https://pacific-rpc.manta.network/http",
+      "https://manta-pacific.drpc.org"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "manta-pacific Explorer",
+      "url": "https://pacific-explorer.manta.network"
+    }
+  },
+  {
+    "chainId": 250,
+    "name": "Fantom Opera",
+    "shortName": "ftm",
+    "rpcs": [
+      "https://rpc.ftm.tools",
+      "https://fantom-rpc.publicnode.com",
+      "https://fantom.drpc.org"
+    ],
+    "nativeCurrency": {
+      "name": "Fantom",
+      "symbol": "FTM",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "ftmscan",
+      "url": "https://ftmscan.com"
+    }
+  },
+  {
+    "chainId": 252,
+    "name": "Fraxtal",
+    "shortName": "frax",
+    "rpcs": [
+      "https://rpc.frax.com",
+      "https://fraxtal-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Frax",
+      "symbol": "FRAX",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "fraxscan",
+      "url": "https://fraxscan.com"
+    }
+  },
+  {
+    "chainId": 324,
+    "name": "zkSync Mainnet",
+    "shortName": "zksync",
+    "rpcs": [
+      "https://mainnet.era.zksync.io",
+      "https://zksync.drpc.org"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "zkSync Era Block Explorer",
+      "url": "https://explorer.zksync.io"
+    }
+  },
+  {
+    "chainId": 480,
+    "name": "World Chain",
+    "shortName": "wc",
+    "rpcs": [
+      "https://worldchain-mainnet.g.alchemy.com/public",
+      "https://480.rpc.thirdweb.com",
+      "https://worldchain-mainnet.gateway.tenderly.co"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "etherscan",
+      "url": "https://worldscan.org"
+    }
+  },
+  {
+    "chainId": 1088,
+    "name": "Metis Andromeda Mainnet",
+    "shortName": "metis-andromeda",
+    "rpcs": [
+      "https://andromeda.metis.io/?owner=1088",
+      "https://metis.drpc.org",
+      "https://metis-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Metis",
+      "symbol": "METIS",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "blockscout",
+      "url": "https://andromeda-explorer.metis.io"
+    }
+  },
+  {
+    "chainId": 1101,
+    "name": "Polygon zkEVM",
+    "shortName": "zkevm",
+    "rpcs": [
+      "https://zkevm-rpc.com",
+      "https://polygon-zkevm.drpc.org"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "blockscout",
+      "url": "https://zkevm.polygonscan.com"
+    }
+  },
+  {
+    "chainId": 1868,
+    "name": "Soneium",
+    "shortName": "soneium",
+    "rpcs": [
+      "https://rpc.soneium.org"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "blockscout",
+      "url": "https://soneium.blockscout.com"
+    }
+  },
+  {
+    "chainId": 1923,
+    "name": "Swellchain",
+    "shortName": "swellchain",
+    "rpcs": [
+      "https://swell-mainnet.alt.technology",
+      "https://rpc.ankr.com/swell"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Swellchain Explorer",
+      "url": "https://explorer.swellnetwork.io"
+    }
+  },
+  {
+    "chainId": 2741,
+    "name": "Abstract",
+    "shortName": "abstract",
+    "rpcs": [
+      "https://api.mainnet.abs.xyz"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Etherscan",
+      "url": "https://abscan.org"
+    }
+  },
+  {
+    "chainId": 5000,
+    "name": "Mantle",
+    "shortName": "mantle",
+    "rpcs": [
+      "https://rpc.mantle.xyz",
+      "https://mantle-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Mantle",
+      "symbol": "MNT",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "mantlescan",
+      "url": "https://mantlescan.xyz"
+    }
+  },
+  {
+    "chainId": 8453,
+    "name": "Base",
+    "shortName": "base",
+    "rpcs": [
+      "https://mainnet.base.org/",
+      "https://developer-access-mainnet.base.org/",
+      "https://base.gateway.tenderly.co",
+      "https://base-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "basescan",
+      "url": "https://basescan.org"
+    }
+  },
+  {
+    "chainId": 34443,
+    "name": "Mode",
+    "shortName": "mode",
+    "rpcs": [
+      "https://mainnet.mode.network",
+      "https://mode.drpc.org"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "modescout",
+      "url": "https://explorer.mode.network"
+    }
+  },
+  {
+    "chainId": 42161,
+    "name": "Arbitrum One",
+    "shortName": "arb1",
+    "rpcs": [
+      "https://arb1.arbitrum.io/rpc",
+      "https://arbitrum-one-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Arbiscan",
+      "url": "https://arbiscan.io"
+    }
+  },
+  {
+    "chainId": 42170,
+    "name": "Arbitrum Nova",
+    "shortName": "arb-nova",
+    "rpcs": [
+      "https://nova.arbitrum.io/rpc",
+      "https://arbitrum-nova-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Arbitrum Nova Chain Explorer",
+      "url": "https://nova-explorer.arbitrum.io"
+    }
+  },
+  {
+    "chainId": 42220,
+    "name": "Celo Mainnet",
+    "shortName": "celo",
+    "rpcs": [
+      "https://forno.celo.org"
+    ],
+    "nativeCurrency": {
+      "name": "CELO",
+      "symbol": "CELO",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Celoscan",
+      "url": "https://celoscan.io"
+    }
+  },
+  {
+    "chainId": 43114,
+    "name": "Avalanche C-Chain",
+    "shortName": "avax",
+    "rpcs": [
+      "https://api.avax.network/ext/bc/C/rpc",
+      "https://avalanche-c-chain-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Avalanche",
+      "symbol": "AVAX",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Etherscan",
+      "url": "https://snowscan.xyz"
+    }
+  },
+  {
+    "chainId": 57073,
+    "name": "Ink",
+    "shortName": "ink",
+    "rpcs": [
+      "https://rpc-gel.inkonchain.com",
+      "https://rpc-qnd.inkonchain.com"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Ink Explorer",
+      "url": "https://explorer.inkonchain.com"
+    }
+  },
+  {
+    "chainId": 59144,
+    "name": "Linea",
+    "shortName": "linea",
+    "rpcs": [
+      "https://rpc.linea.build",
+      "https://linea-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Linea Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Etherscan",
+      "url": "https://lineascan.build"
+    }
+  },
+  {
+    "chainId": 81457,
+    "name": "Blast",
+    "shortName": "blastmainnet",
+    "rpcs": [
+      "https://rpc.blast.io",
+      "https://rpc.ankr.com/blast",
+      "https://blast.din.dev/rpc",
+      "https://blastl2-mainnet.public.blastapi.io"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Blastscan",
+      "url": "https://blastscan.io"
+    }
+  },
+  {
+    "chainId": 534352,
+    "name": "Scroll",
+    "shortName": "scr",
+    "rpcs": [
+      "https://rpc.scroll.io",
+      "https://rpc.ankr.com/scroll",
+      "https://scroll-mainnet.chainstacklabs.com",
+      "https://scroll-rpc.publicnode.com"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Scrollscan",
+      "url": "https://scrollscan.com"
+    }
+  },
+  {
+    "chainId": 7777777,
+    "name": "Zora",
+    "shortName": "zora",
+    "rpcs": [
+      "https://rpc.zora.energy/"
+    ],
+    "nativeCurrency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "explorer": {
+      "name": "Zora Network Explorer",
+      "url": "https://explorer.zora.energy"
+    }
+  }
+]

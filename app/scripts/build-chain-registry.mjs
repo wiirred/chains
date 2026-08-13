@@ -1,10 +1,10 @@
 /**
- * Builds the runtime chain registry from this repository's own `_data/chains`.
+ * Builds the runtime chain registry.
  *
- * The trading app needs three things per chain that the dataset already holds:
- * a name to show, a public RPC it can actually call from a browser, and a block
- * explorer to link receipts to. Everything else is dropped so the bundle stays
- * small.
+ * The trading app needs three things per chain: a name to show, a public RPC it
+ * can call from a browser, and a block explorer to link receipts to. The
+ * ethereum-lists/chains dataset holds all three; everything else is dropped so
+ * the bundle stays small.
  *
  * Two files come out of this, because the full dataset is far too large to sit
  * in the initial bundle:
@@ -12,14 +12,34 @@
  *                       shipped eagerly so the trade panel renders immediately.
  *   - chains.json       all 2300+ non-deprecated chains, loaded on demand when
  *                       someone opens the full network browser.
+ *
+ * The dataset is found in this order, so that the app builds whether or not it
+ * lives next to a checkout of it:
+ *   1. $CHAINS_DATA_DIR             — an explicit path
+ *   2. ../_data/chains              — a sibling checkout (this repo)
+ *   3. vendor/chains.core.json      — a committed snapshot, always present
+ *
+ * Falling back to the snapshot costs the long tail of chains, not correctness:
+ * the app still trades on every routable network, it just knows fewer obscure
+ * ones for explorer links and wallet network-adding.
  */
-import { readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const dataDir = join(here, '..', '..', '_data', 'chains')
 const outDir = join(here, '..', 'src', 'generated')
+const snapshotFile = join(here, '..', 'vendor', 'chains.core.json')
+
+function resolveDataDir() {
+  const candidates = [process.env.CHAINS_DATA_DIR, join(here, '..', '..', '_data', 'chains')]
+  for (const candidate of candidates) {
+    if (candidate && existsSync(candidate)) return candidate
+  }
+  return null
+}
+
+const dataDir = resolveDataDir()
 
 /**
  * Chains that liquidity venues and bridges actually serve today. Being on this
@@ -78,37 +98,52 @@ function pickExplorer(explorers = []) {
   return chosen ? { name: chosen.name, url: chosen.url.replace(/\/+$/, '') } : null
 }
 
-const chains = []
+function readDataset(directory) {
+  const collected = []
 
-for (const file of readdirSync(dataDir)) {
-  if (!file.endsWith('.json')) continue
+  for (const file of readdirSync(directory)) {
+    if (!file.endsWith('.json')) continue
 
-  let chain
-  try {
-    chain = JSON.parse(readFileSync(join(dataDir, file), 'utf8'))
-  } catch (err) {
-    throw new Error(`Could not parse ${file}: ${err.message}`)
+    let chain
+    try {
+      chain = JSON.parse(readFileSync(join(directory, file), 'utf8'))
+    } catch (err) {
+      throw new Error(`Could not parse ${file}: ${err.message}`)
+    }
+
+    // A deprecated chain may have had its ID reused, which is exactly the kind of
+    // ambiguity we must never route someone's money through.
+    if (chain.status === 'deprecated') continue
+    if (typeof chain.chainId !== 'number') continue
+
+    const rpcs = usableRpcs(chain.rpc)
+    if (rpcs.length === 0) continue
+
+    collected.push({
+      chainId: chain.chainId,
+      name: chain.name,
+      shortName: chain.shortName,
+      // Cap the RPC list: we only need a couple of fallbacks, not twelve.
+      rpcs: rpcs.slice(0, 4),
+      nativeCurrency: chain.nativeCurrency,
+      explorer: pickExplorer(chain.explorers),
+      testnet: /testnet|devnet|sepolia|goerli|holesky/i.test(chain.name) || undefined,
+    })
   }
 
-  // A deprecated chain may have had its ID reused, which is exactly the kind of
-  // ambiguity we must never route someone's money through.
-  if (chain.status === 'deprecated') continue
-  if (typeof chain.chainId !== 'number') continue
-
-  const rpcs = usableRpcs(chain.rpc)
-  if (rpcs.length === 0) continue
-
-  chains.push({
-    chainId: chain.chainId,
-    name: chain.name,
-    shortName: chain.shortName,
-    // Cap the RPC list: we only need a couple of fallbacks, not twelve.
-    rpcs: rpcs.slice(0, 4),
-    nativeCurrency: chain.nativeCurrency,
-    explorer: pickExplorer(chain.explorers),
-    testnet: /testnet|devnet|sepolia|goerli|holesky/i.test(chain.name) || undefined,
-  })
+  return collected
 }
+
+const usingSnapshot = dataDir === null
+
+if (usingSnapshot && !existsSync(snapshotFile)) {
+  throw new Error(
+    `No chain dataset found and no snapshot at ${snapshotFile}. ` +
+      `Set CHAINS_DATA_DIR to a checkout of ethereum-lists/chains, or restore the snapshot.`,
+  )
+}
+
+const chains = usingSnapshot ? JSON.parse(readFileSync(snapshotFile, 'utf8')) : readDataset(dataDir)
 
 chains.sort((a, b) => a.chainId - b.chainId)
 
@@ -134,4 +169,14 @@ for (const [file, value] of [
   writeFileSync(join(outDir, file), json)
   const kb = Math.round(Buffer.byteLength(json) / 1024)
   console.log(`${file}: ${value.length} chains, ${kb} KB`)
+}
+
+// Refresh the committed snapshot whenever the real dataset is available, so a
+// standalone build never drifts far behind the source of truth.
+if (!usingSnapshot) {
+  mkdirSync(dirname(snapshotFile), { recursive: true })
+  writeFileSync(snapshotFile, JSON.stringify(coreChains, null, 2) + '\n')
+  console.log(`source: ${dataDir}`)
+} else {
+  console.log(`source: committed snapshot (long-tail chains unavailable)`)
 }
