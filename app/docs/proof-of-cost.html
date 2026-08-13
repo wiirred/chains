@@ -1,0 +1,746 @@
+<title>Proof of Cost</title>
+<style>
+  /* Light palette is the base. Ledger paper, ink, and audit green — neutrals
+     carry a slight green bias so they read as chosen rather than inherited. */
+  :root {
+    --ground: #f6f8f6;
+    --surface: #ffffff;
+    --surface-sunk: #eef1ee;
+    --rule: #d8ded9;
+    --ink: #121a16;
+    --ink-soft: #5c6a62;
+    --accent: #0f6b4f;
+    --accent-soft: #e2efe9;
+    --critical: #9c3a1c;
+    --critical-soft: #f8ebe5;
+    --gold: #7d6412;
+
+    --display: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    --mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, 'Cascadia Mono', Consolas, monospace;
+
+    --measure: 68ch;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --ground: #0d1411;
+      --surface: #151e19;
+      --surface-sunk: #1b2620;
+      --rule: #2b3830;
+      --ink: #e4ede8;
+      --ink-soft: #93a39a;
+      --accent: #55c095;
+      --accent-soft: #173026;
+      --critical: #e08a6b;
+      --critical-soft: #33201a;
+      --gold: #c8a944;
+    }
+  }
+
+  :root[data-theme='dark'] {
+    --ground: #0d1411;
+    --surface: #151e19;
+    --surface-sunk: #1b2620;
+    --rule: #2b3830;
+    --ink: #e4ede8;
+    --ink-soft: #93a39a;
+    --accent: #55c095;
+    --accent-soft: #173026;
+    --critical: #e08a6b;
+    --critical-soft: #33201a;
+    --gold: #c8a944;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: clamp(32px, 6vw, 72px) clamp(20px, 5vw, 40px) 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 56px;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(38px, 7vw, 62px);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    text-wrap: balance;
+    margin: 14px 0 0;
+  }
+
+  h2 {
+    font-family: var(--display);
+    font-size: clamp(23px, 3.4vw, 30px);
+    font-weight: 750;
+    letter-spacing: -0.022em;
+    line-height: 1.15;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  h3 {
+    font-family: var(--display);
+    font-size: 17.5px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0;
+  }
+
+  p { margin: 0; max-width: var(--measure); }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, .lede a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+  .lede {
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    max-width: 60ch;
+    margin-top: 20px;
+  }
+
+  section { display: flex; flex-direction: column; gap: 20px; }
+
+  .section-head {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 26px;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* --- caveat --- */
+
+  .caveat {
+    background: var(--critical-soft);
+    border-left: 3px solid var(--critical);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .caveat strong { color: var(--critical); }
+  .caveat p { font-size: 15px; max-width: 64ch; }
+
+  /* --- claim grid --- */
+
+  .claims {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+
+  .claim {
+    background: var(--surface);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .claim__label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    color: var(--ink-soft);
+  }
+
+  .claim h3 { font-size: 16px; }
+  .claim p { font-size: 14.5px; line-height: 1.5; color: var(--ink-soft); }
+
+  /* --- gap list --- */
+
+  .gaps { display: flex; flex-direction: column; gap: 2px; background: var(--rule); border: 1px solid var(--rule); }
+
+  .gap {
+    background: var(--surface);
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 116px 1fr;
+    gap: 4px 18px;
+    align-items: baseline;
+  }
+
+  @media (max-width: 620px) {
+    .gap { grid-template-columns: 1fr; }
+  }
+
+  .gap__tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--ink-soft);
+    padding: 2px 0;
+  }
+
+  .gap__tag--hard { color: var(--critical); }
+  .gap__tag--soft { color: var(--gold); }
+
+  .gap h3 { font-size: 16px; }
+  .gap p { grid-column: 2; font-size: 14.5px; line-height: 1.5; color: var(--ink-soft); max-width: 58ch; }
+
+  @media (max-width: 620px) {
+    .gap p { grid-column: 1; }
+  }
+
+  /* --- table --- */
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--rule); background: var(--surface); }
+
+  table { border-collapse: collapse; width: 100%; min-width: 620px; font-size: 14.5px; }
+
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+
+  thead th {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    background: var(--surface-sunk);
+    white-space: nowrap;
+  }
+
+  tbody th { font-weight: 650; font-size: 14.5px; }
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: none; }
+
+  .yes { color: var(--accent); font-weight: 650; }
+  .no { color: var(--critical); }
+  .partial { color: var(--gold); }
+
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* --- pull quote / thesis --- */
+
+  .thesis {
+    background: var(--accent-soft);
+    padding: clamp(22px, 4vw, 32px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .thesis p { font-size: 19px; line-height: 1.45; max-width: 56ch; }
+  .thesis p strong { font-weight: 750; }
+
+  /* --- phases: a real sequence, so numbering carries meaning --- */
+
+  .phases { display: flex; flex-direction: column; gap: 2px; background: var(--rule); border: 1px solid var(--rule); counter-reset: phase; }
+
+  .phase {
+    background: var(--surface);
+    padding: 20px 18px;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 6px 16px;
+    align-items: start;
+  }
+
+  .phase::before {
+    counter-increment: phase;
+    content: counter(phase, decimal-leading-zero);
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    grid-row: span 3;
+    padding-top: 2px;
+  }
+
+  .phase p { font-size: 14.5px; line-height: 1.52; color: var(--ink-soft); max-width: 56ch; }
+
+  .phase__meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+
+  /* --- blocked --- */
+
+  .blocked { background: var(--surface); border: 1px solid var(--rule); padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .blocked ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; }
+  .blocked li { font-size: 15px; max-width: 62ch; }
+  .blocked code { font-family: var(--mono); font-size: 13px; background: var(--surface-sunk); padding: 1px 5px; }
+
+  footer { border-top: 1px solid var(--rule); padding-top: 22px; }
+  footer p { font-size: 13.5px; color: var(--ink-soft); }
+</style>
+
+<div class="page">
+
+  <header>
+    <p class="eyebrow">Product strategy · August 2026</p>
+    <h1>Proof of Cost</h1>
+    <p class="lede">
+      Where FOMO falls short, what this platform can own that nobody else does, and how to build a crypto project whose
+      utility survives after the attention leaves.
+    </p>
+  </header>
+
+  <div class="caveat">
+    <strong>Read this caveat before you act on the FOMO section</strong>
+    <p>
+      Every primary source about FOMO is blocked from the environment this was researched in — fomo.family, its docs
+      site, and Wikipedia all refused the connection. What follows comes from search-result summaries, and a large share
+      of the pages that rank for &ldquo;FOMO app review&rdquo; are affiliate sites earning a referral commission on
+      sign-ups. Their claims about fees and features are not independent.
+    </p>
+    <p>
+      Treat the FOMO column below as <em>a hypothesis to verify</em>, not established fact. The one finding that is
+      robust is that sources disagree with each other — which is itself the point.
+    </p>
+  </div>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">The competitor</p>
+      <h2>What FOMO appears to be</h2>
+    </div>
+    <p>
+      A social-first, mobile crypto trading app built around discovery and copying other traders. Its bet is that the
+      hard part of trading is knowing <em>what</em> to trade, so the product optimises for speed of onboarding and social
+      signal.
+    </p>
+
+    <div class="claims">
+      <div class="claim">
+        <span class="claim__label">Onboarding</span>
+        <h3>Sign up in under a minute</h3>
+        <p>Email or Apple ID, with an embedded self-custodial wallet created for you. No external wallet needed.</p>
+      </div>
+      <div class="claim">
+        <span class="claim__label">Social</span>
+        <h3>Follow, copy, leaderboards</h3>
+        <p>Trade alerts from people you follow, trades overlaid on price charts, and profitability rankings over 24h/7d/30d.</p>
+      </div>
+      <div class="claim">
+        <span class="claim__label">Cross-chain</span>
+        <h3>One balance, &ldquo;no bridges&rdquo;</h3>
+        <p>Trade across Solana, Base, BNB Chain and Monad from a single balance, with gasless swaps.</p>
+      </div>
+      <div class="claim">
+        <span class="claim__label">Pricing</span>
+        <h3>A single headline fee</h3>
+        <p>Reported as 0.50% per trade by some sources and a $1 flat fee by others. Gas and slippage are extra.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">The opening</p>
+      <h2>Where it is weak</h2>
+    </div>
+    <p>
+      Two kinds of gap. The <span style="color:var(--critical)">structural</span> ones come from decisions baked into
+      the business model, and are expensive for FOMO to close. The <span style="color:var(--gold)">soft</span> ones are
+      roadmap items they will probably ship eventually.
+    </p>
+
+    <div class="gaps">
+      <div class="gap">
+        <span class="gap__tag gap__tag--hard">Structural</span>
+        <h3>The headline fee is not the cost</h3>
+        <p>
+          A flat 0.50% is a clean number that describes only the named charge. Sources concede that slippage on thin
+          pairs adds to the effective cost — which means the real cost is unstated, and on a memecoin pair the unstated
+          part can dwarf the stated one.
+        </p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag gap__tag--hard">Structural</span>
+        <h3>Sources cannot agree what it charges</h3>
+        <p>
+          0.50% and $1 flat are wildly different products: on a $50 trade one costs 25&cent; and the other costs $1. That
+          reputable-looking pages disagree means the pricing is not legible enough to be reported consistently.
+        </p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag gap__tag--hard">Structural</span>
+        <h3>&ldquo;No bridges&rdquo; is an abstraction, not an absence</h3>
+        <p>
+          Value still crosses chains; the user just cannot see the mechanism or its price. Abstraction is good UX and a
+          perfect place to hide a margin — and it removes the user's ability to decline the bridge risk.
+        </p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag gap__tag--hard">Structural</span>
+        <h3>Embedded wallet only</h3>
+        <p>
+          Great for onboarding, but hardware wallet support is reported as limited. Anyone with meaningful size keeps it
+          on a Ledger, so the product is structurally capped at small balances.
+        </p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag gap__tag--hard">Structural</span>
+        <h3>Copying traders is a fee-generating machine</h3>
+        <p>
+          Leaderboards ranked by profit reward volatility and survivorship. The incentive is more trades, and more
+          trades is more fee revenue — so the product's social core and its revenue model both point away from telling
+          people when not to trade.
+        </p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag gap__tag--soft">Roadmap</span>
+        <h3>Card funding still &ldquo;coming soon&rdquo;</h3>
+        <p>Debit and credit funding is unshipped; users deposit crypto or use Apple Pay in some regions.</p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag gap__tag--soft">Roadmap</span>
+        <h3>Portfolio analytics described as basic</h3>
+        <p>Reviewers repeatedly call the analytics thin. No cost-basis reporting, no realised-versus-unrealised breakdown.</p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag gap__tag--soft">Roadmap</span>
+        <h3>No advanced order types</h3>
+        <p>Market orders in a social feed. No limit orders, stops, or scheduled execution.</p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag gap__tag--soft">Roadmap</span>
+        <h3>Support and reliability complaints</h3>
+        <p>Reports of trouble selling and withdrawing, generic support replies, and lag at peak. Ordinary scaling pain.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">The wedge</p>
+      <h2>Why they cannot simply copy you</h2>
+    </div>
+
+    <div class="thesis">
+      <p>
+        <strong>A venue that itemises the spread cannot quietly widen it.</strong>
+      </p>
+      <p>
+        Most trading revenue in crypto is not the disclosed fee — it is the difference between the price you got and the
+        price that existed. Publishing that number as a line item, next to the disclosed fee, converts a soft margin into
+        a public commitment.
+      </p>
+      <p>
+        That is why transparency is not a feature a competitor bolts on in a sprint. It is a constraint they would have
+        to accept on their own revenue. Anyone can add a social feed to your product in a month; nobody can add your
+        ledger to theirs without giving something up.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">The position</p>
+      <h2>Feature-by-feature</h2>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Capability</th>
+            <th scope="col">FOMO</th>
+            <th scope="col">Clearswap today</th>
+            <th scope="col">Effort to close</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Every cost itemised, lines summing to the total</th>
+            <td class="no">No</td>
+            <td class="yes">Shipped</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <th scope="row">Spread and price impact shown as a number</th>
+            <td class="no">No</td>
+            <td class="yes">Shipped</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <th scope="row">Bridging the user can switch off</th>
+            <td class="no">No — abstracted away</td>
+            <td class="yes">Shipped</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <th scope="row">Estimated versus actually-paid receipt</th>
+            <td class="no">No</td>
+            <td class="yes">Shipped</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <th scope="row">Bring your own wallet, including hardware</th>
+            <td class="partial">Limited</td>
+            <td class="yes">Shipped</td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <th scope="row">Chain coverage</th>
+            <td>4 chains, incl. Solana</td>
+            <td class="partial">EVM only, <span class="num">2,344</span> chains known</td>
+            <td>Solana: weeks</td>
+          </tr>
+          <tr>
+            <th scope="row">Lifetime cost history &amp; export</th>
+            <td class="no">No</td>
+            <td class="no">Not yet</td>
+            <td>Days</td>
+          </tr>
+          <tr>
+            <th scope="row">Cost comparison against other venues</th>
+            <td class="no">No</td>
+            <td class="no">Not yet</td>
+            <td>Days</td>
+          </tr>
+          <tr>
+            <th scope="row">Limit orders</th>
+            <td class="no">No</td>
+            <td class="no">Not yet</td>
+            <td>Weeks</td>
+          </tr>
+          <tr>
+            <th scope="row">Social feed, follows, copytrading</th>
+            <td class="yes">Shipped</td>
+            <td class="no">No</td>
+            <td>Needs a backend</td>
+          </tr>
+          <tr>
+            <th scope="row">Email sign-up, embedded wallet</th>
+            <td class="yes">Shipped</td>
+            <td class="no">No</td>
+            <td>Provider account</td>
+          </tr>
+          <tr>
+            <th scope="row">Card / Apple Pay funding</th>
+            <td class="partial">Partial</td>
+            <td class="no">No</td>
+            <td>On-ramp partner, KYC</td>
+          </tr>
+          <tr>
+            <th scope="row">Gasless swaps</th>
+            <td class="yes">Shipped</td>
+            <td class="no">No</td>
+            <td>Paymaster + funding</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      The shape of that table is the strategy. You already hold the row that is hardest for them to take. The rows they
+      hold are mostly infrastructure and partnerships — real work, but work with a known price and no conceptual
+      obstacle.
+    </p>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">The build</p>
+      <h2>Four things nobody currently offers</h2>
+    </div>
+
+    <div class="gaps">
+      <div class="gap">
+        <span class="gap__tag">Days</span>
+        <h3>The cost odometer</h3>
+        <p>
+          A running total of what trading has actually cost this wallet — this month, this year, since you started —
+          broken down by gas, spread, bridge and platform fee. Every venue shows you your profit. None will tell you
+          what the venue itself took.
+        </p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag">Days</span>
+        <h3>The same trade, priced elsewhere</h3>
+        <p>
+          Beside every quote: what this trade would cost on a flat-0.50% venue, on a 1% venue, and at cost. Pure
+          arithmetic on numbers already in hand, and it makes the comparison concrete instead of rhetorical.
+        </p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag">Days</span>
+        <h3>Receipts that survive the session</h3>
+        <p>
+          Signed, exportable records with tx hashes, itemised costs and cost basis — CSV for a spreadsheet, JSON for an
+          accountant. Crypto tax software reconstructs this badly from chain data. You have it first-hand.
+        </p>
+      </div>
+      <div class="gap">
+        <span class="gap__tag">Weeks</span>
+        <h3>Honest execution scoring</h3>
+        <p>
+          Because you record estimated versus actual on every trade, you can grade routers and bridges on how often
+          their quotes hold. Nobody can publish that credibly about themselves — but a venue that measures everyone,
+          including itself, can.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">The crypto project</p>
+      <h2>Utility that outlasts the attention</h2>
+    </div>
+
+    <p>
+      You asked for a real product with real utility that survives without hype. The honest starting point: most tokens
+      fail because the product would work identically without them. So the test for anything here is whether it does
+      something the product genuinely needs.
+    </p>
+
+    <p>
+      The asset you are accumulating is not a token. It is <strong>a dataset nobody else can produce</strong>: verified,
+      first-hand records of what trades actually cost, across venues and chains, measured rather than advertised. That
+      compounds with every trade, it is useful to people who will never care about crypto ideology, and it gets more
+      valuable as it gets older.
+    </p>
+
+    <div class="phases">
+      <div class="phase">
+        <h3>Receipts, local and private</h3>
+        <span class="phase__meta">No token · no backend · shipping now</span>
+        <p>
+          Every trade produces an itemised, exportable record. Value to the user is immediate and needs nobody else to
+          participate. This is the part that must be good before anything else is built.
+        </p>
+      </div>
+      <div class="phase">
+        <h3>The public cost index</h3>
+        <span class="phase__meta">No token · opt-in publishing</span>
+        <p>
+          Users can publish a receipt, signed by the wallet that made the trade, stripped of identity. Aggregate them
+          into a public index of real execution cost by pair, chain, router and venue. Anyone can verify a receipt
+          against the chain, which is what separates this from self-reported marketing numbers.
+        </p>
+      </div>
+      <div class="phase">
+        <h3>Cost-aware routing</h3>
+        <span class="phase__meta">No token · the index feeding back</span>
+        <p>
+          Once you know which routers' quotes hold and which venues quietly widen, route around the bad ones. The
+          product gets measurably cheaper because of the dataset — the flywheel that makes the whole thing defensible.
+        </p>
+      </div>
+      <div class="phase">
+        <h3>A token, only if the index needs one</h3>
+        <span class="phase__meta">Deliberately deferred</span>
+        <p>
+          The one job a token could genuinely do here is pay for adversarial verification: stake to attest that a batch
+          of receipts is accurate, and let anyone challenge a false one and take the stake. That is a real coordination
+          problem — but only once the index is big enough that lying about it is worth someone's money. Launching it
+          before then means the token is the product, which is the failure mode you asked to avoid.
+        </p>
+      </div>
+    </div>
+
+    <div class="thesis">
+      <p>
+        <strong>Ship phases one through three with no token at all.</strong>
+      </p>
+      <p>
+        If the index becomes something people rely on, the token has an obvious job and an obvious value. If it does not,
+        you have still built a genuinely useful product and you have not sold anyone a claim on nothing. Every phase is
+        worth doing on its own terms — that is the actual test of durable utility.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">Maki</p>
+      <h2>How this connects to the lore, and how it shouldn't</h2>
+    </div>
+    <p>
+      A caution worth stating plainly: attaching a financial product's value to a fictional universe is the exact
+      mechanism by which hype-driven projects fail. If the token's worth depends on people caring about the story, then
+      when they stop caring, it goes to zero — regardless of how good the trading product is.
+    </p>
+    <p>
+      The version that works keeps them separate in substance and joined in surface. Maki is the brand, the voice, the
+      reason someone remembers the name and enjoys being there. The cost index is the thing that has to stand on its own
+      spreadsheet. A good analogy is any company with a beloved mascot: the mascot brings people in, and the product is
+      why they stay. Nobody values the company on the mascot.
+    </p>
+    <p>
+      Concretely, that means the lore can own the identity, the community, the interface personality and the cosmetics —
+      and should stay out of the token's value accrual, the fee schedule, and anything a user has to understand to know
+      what a trade costs them.
+    </p>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <p class="eyebrow">Blocked</p>
+      <h2>What I need to put this into MAKIAI.app</h2>
+    </div>
+
+    <div class="blocked">
+      <p>
+        This session can reach exactly two repositories — <code>wiirred/chains</code> and
+        <code>wiirred/solana-copy-trader</code> — and no MAKIAI.app project, no <code>.env</code>, and no uploaded app
+        files exist anywhere in the container. The attachment directory is empty. So the integration work has not
+        started; nothing was guessed at or stubbed.
+      </p>
+      <p>Any one of these unblocks it:</p>
+      <ul>
+        <li>
+          <strong>If MAKIAI.app is on GitHub</strong> — tell me the <code>owner/repo</code> and I will attach it. It did
+          not appear in the account listing, so it is probably under a different account or organisation.
+        </li>
+        <li>
+          <strong>If the app is a local project</strong> — the files were not attached to this conversation. Re-upload
+          them and they will land where I can read them.
+        </li>
+        <li>
+          <strong>The <code>.env</code></strong> — do not paste secrets into chat. Tell me which service it points at
+          and which variable names it defines, and I will write against those names without ever needing the values.
+        </li>
+      </ul>
+      <p>
+        Worth knowing once I can see it: whether the site and app share a codebase, and what the framework is. That
+        decides whether this ships as a route in the existing app or as a package both consume — which is the difference
+        between keeping the two in sync automatically and maintaining them twice.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      Sources on FOMO are secondary and partly affiliate-funded; see the caveat at the top. Everything stated about
+      Clearswap is verified against the code in <code>app/</code> — 14 passing ledger tests, a production build, and the
+      cross-chain flow exercised in a real browser.
+    </p>
+  </footer>
+
+</div>
