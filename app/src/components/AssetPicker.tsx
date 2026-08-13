@@ -15,6 +15,8 @@ export type AssetPickerProps = {
   tokensByChain: Record<number, Token[]>
   balances: TokenBalance[]
   initialChainId: number
+  /** Shown above the chain list, e.g. to explain what picking another chain will do. */
+  note?: string
   onSelect: (chainId: number, token: Token) => void
   onClose: () => void
 }
@@ -25,6 +27,7 @@ export function AssetPicker({
   tokensByChain,
   balances,
   initialChainId,
+  note,
   onSelect,
   onClose,
 }: AssetPickerProps) {
@@ -75,6 +78,8 @@ export function AssetPicker({
             ×
           </button>
         </header>
+
+        {note ? <p className="modal__note">{note}</p> : null}
 
         <div className="modal__chains">
           {chainIds.map((id) => (

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useWallet } from './hooks/useWallet'
 import { useTokens } from './hooks/useTokens'
 import { useBalances } from './hooks/useBalances'
+import { usePersistedState } from './hooks/usePersistedState'
 import { useQuote } from './hooks/useQuote'
 import { TradePanel, amountToRaw, type Side } from './components/TradePanel'
 import { CostLedger } from './components/CostLedger'
@@ -33,6 +34,7 @@ export default function App() {
   const [to, setTo] = useState<Side>({ chainId: DEFAULT_CHAIN, token: null })
   const [amount, setAmount] = useState('')
   const [slippage, setSlippage] = useState(DEFAULT_SLIPPAGE)
+  const [bridging, setBridging] = usePersistedState('clearswap:bridging', true)
   const [picking, setPicking] = useState<'from' | 'to' | null>(null)
   const [confirming, setConfirming] = useState(false)
   const [approvalPolicy, setApprovalPolicy] = useState<ApprovalPolicy>('exact')
@@ -56,6 +58,8 @@ export default function App() {
   const quoteRequest = useMemo(() => {
     if (!wallet.account || !from.token || !to.token || !fromRaw) return null
     if (from.chainId === to.chainId && from.token.address.toLowerCase() === to.token.address.toLowerCase()) return null
+    // Never request a route the user has forbidden.
+    if (!bridging && from.chainId !== to.chainId) return null
 
     return {
       fromChain: from.chainId,
@@ -66,7 +70,7 @@ export default function App() {
       fromAddress: wallet.account,
       slippage,
     }
-  }, [wallet.account, from, to, fromRaw, slippage])
+  }, [wallet.account, from, to, fromRaw, slippage, bridging])
 
   const quote = useQuote(quoteRequest, { paused: executing || confirming })
 
@@ -111,12 +115,33 @@ export default function App() {
 
   const onPickAsset = useCallback(
     (chainId: number, token: Token) => {
-      if (picking === 'from') setFrom({ chainId, token })
-      if (picking === 'to') setTo({ chainId, token })
+      if (picking === 'from') {
+        setFrom({ chainId, token })
+        // With bridging off, a trade must begin and end on the same chain, so
+        // moving one side moves the other rather than silently producing a pair
+        // that can never be routed.
+        if (!bridging) setTo((previous) => (previous.chainId === chainId ? previous : { chainId, token: null }))
+      }
+      if (picking === 'to') {
+        setTo({ chainId, token })
+        if (!bridging) setFrom((previous) => (previous.chainId === chainId ? previous : { chainId, token: null }))
+      }
       setPicking(null)
       setConfirming(false)
     },
-    [picking],
+    [picking, bridging],
+  )
+
+  /** Turning bridging off collapses an in-progress cross-chain trade onto one chain. */
+  const onBridgingChange = useCallback(
+    (enabled: boolean) => {
+      setBridging(enabled)
+      setConfirming(false)
+      if (!enabled && from.chainId !== to.chainId) {
+        setTo({ chainId: from.chainId, token: null })
+      }
+    },
+    [from.chainId, to.chainId, setBridging],
   )
 
   const flip = useCallback(() => {
@@ -184,6 +209,8 @@ export default function App() {
             slippage={slippage}
             balance={fromBalance}
             receive={ledger ? { decimal: ledger.receive.decimal, symbol: ledger.receive.symbol, usd: ledger.receive.usd } : null}
+            bridging={bridging}
+            onBridgingChange={onBridgingChange}
             onAmountChange={(next) => {
               setAmount(next)
               setConfirming(false)
@@ -205,7 +232,9 @@ export default function App() {
               fromChainId={from.chainId}
               sufficient={sufficient}
               needUsd={needUsd}
+              bridging={bridging}
               onUseFunds={useFundsFrom}
+              onEnableBridging={() => setBridging(true)}
             />
           ) : null}
 
@@ -310,6 +339,11 @@ export default function App() {
           tokensByChain={tokensByChain}
           balances={balances}
           initialChainId={picking === 'from' ? from.chainId : to.chainId}
+          note={
+            bridging
+              ? undefined
+              : 'Bridging is off, so both sides of the trade stay on one chain. Choosing another chain here moves the whole trade to it.'
+          }
           onSelect={onPickAsset}
           onClose={() => setPicking(null)}
         />

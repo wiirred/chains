@@ -25,7 +25,10 @@ export type FundingRadarProps = {
   sufficient: boolean
   /** Roughly what the trade needs, in USD. */
   needUsd: number
+  /** Whether the user has allowed routes to cross chains. */
+  bridging: boolean
   onUseFunds: (balance: TokenBalance) => void
+  onEnableBridging: () => void
 }
 
 export function FundingRadar({
@@ -36,7 +39,9 @@ export function FundingRadar({
   fromChainId,
   sufficient,
   needUsd,
+  bridging,
   onUseFunds,
+  onEnableBridging,
 }: FundingRadarProps) {
   const total = totalUsd(balances)
   const chains = byChain(balances)
@@ -85,7 +90,19 @@ export function FundingRadar({
         ))}
       </ul>
 
-      {elsewhere.length > 0 ? (
+      {elsewhere.length > 0 && !bridging ? (
+        <div className="radar__bridge radar__bridge--off">
+          <p className="radar__bridge-lede">
+            You have {formatUsd(elsewhere.reduce((sum, option) => sum + option.balance.usd, 0))} on other chains that
+            could cover this trade, but bridging is turned off — so it stays where it is.
+          </p>
+          <button type="button" className="button button--ghost" onClick={onEnableBridging}>
+            Turn on bridging for this trade
+          </button>
+        </div>
+      ) : null}
+
+      {elsewhere.length > 0 && bridging ? (
         <div className="radar__bridge">
           <p className="radar__bridge-lede">
             You do not have enough on {chainName(fromChainId)} — but you do elsewhere. Pick one and the bridge becomes

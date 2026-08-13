@@ -25,8 +25,11 @@ export type TradePanelProps = {
   balance: TokenBalance | null
   /** Quoted output, once a route has been priced. */
   receive: { decimal: string; symbol: string; usd: number | null } | null
+  /** Whether routes are allowed to cross chains at all. */
+  bridging: boolean
   onAmountChange: (amount: string) => void
   onSlippageChange: (slippage: number) => void
+  onBridgingChange: (enabled: boolean) => void
   onPick: (side: 'from' | 'to') => void
   onFlip: () => void
 }
@@ -74,8 +77,10 @@ export function TradePanel({
   slippage,
   balance,
   receive,
+  bridging,
   onAmountChange,
   onSlippageChange,
+  onBridgingChange,
   onPick,
   onFlip,
 }: TradePanelProps) {
@@ -133,12 +138,31 @@ export function TradePanel({
         ) : null}
       </SideField>
 
-      {crossChain ? (
+      {crossChain && bridging ? (
         <p className="trade__crosschain">
           This trade crosses chains: {chainName(from.chainId)} → {chainName(to.chainId)}. The bridge is included in the
           route and priced in the breakdown.
         </p>
       ) : null}
+
+      <div className="trade__bridging">
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={bridging}
+            onChange={(event) => onBridgingChange(event.target.checked)}
+          />
+          <span className="toggle__track" aria-hidden />
+          <span className="toggle__text">
+            <strong>Bridge between chains</strong>
+            <span className="muted">
+              {bridging
+                ? 'Trades may cross chains, and the bridge is priced as its own line before you sign.'
+                : 'Off — every trade stays on one chain. Funds on other chains are left where they are.'}
+            </span>
+          </span>
+        </label>
+      </div>
 
       <div className="trade__slippage">
         <label htmlFor="slippage">Max slippage</label>
