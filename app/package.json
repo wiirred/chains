@@ -10,7 +10,9 @@
     "build": "npm run registry && tsc --noEmit && vite build",
     "preview": "vite preview",
     "test": "npm run registry && vitest run",
-    "typecheck": "npm run registry && tsc --noEmit"
+    "typecheck": "npm run registry && tsc --noEmit",
+    "build:embed": "npm run registry && vite build --config vite.embed.config.ts",
+    "build:all": "npm run build && npm run build:embed"
   },
   "dependencies": {
     "react": "^19.2.8",

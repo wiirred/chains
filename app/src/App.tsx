@@ -353,9 +353,12 @@ export default function App() {
 
       <footer className="app__footer">
         <p>
-          Chain data, RPC endpoints and explorer links come from this repository's <code>_data/chains</code> dataset.
-          Routing and pricing come from the LI.FI aggregator. Nothing here custodies your funds — every transaction is
-          signed by your own wallet.
+          Chain data, RPC endpoints and explorer links come from the{' '}
+          <a href="https://github.com/ethereum-lists/chains" target="_blank" rel="noreferrer noopener">
+            ethereum-lists/chains
+          </a>{' '}
+          dataset. Routing and pricing come from the LI.FI aggregator. Nothing here custodies your funds — every
+          transaction is signed by your own wallet.
         </p>
       </footer>
     </div>

@@ -1,4 +1,5 @@
 node_modules
 dist
+dist-embed
 # Derived from _data/chains by scripts/build-chain-registry.mjs on every build.
 src/generated

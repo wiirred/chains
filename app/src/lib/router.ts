@@ -7,7 +7,7 @@
  * destination chain, and if they differ the returned route simply contains a
  * bridge step.
  */
-import { INTEGRATOR, PLATFORM_FEE_BPS, PLATFORM_FEE_RECIPIENT, ROUTER_API, ROUTER_API_KEY } from '../config'
+import { INTEGRATOR, PLATFORM_FEE_BPS, PLATFORM_FEE_RECIPIENT, ROUTER_API, routerApiKey } from '../config'
 
 export type Token = {
   address: string
@@ -120,7 +120,8 @@ async function request<T>(path: string, params: Record<string, string | number |
   }
 
   const headers: Record<string, string> = { accept: 'application/json' }
-  if (ROUTER_API_KEY) headers['x-lifi-api-key'] = ROUTER_API_KEY
+  const apiKey = routerApiKey()
+  if (apiKey) headers['x-lifi-api-key'] = apiKey
 
   const res = await fetch(url, { headers, signal })
 

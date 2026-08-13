@@ -38,8 +38,22 @@ export const INTEGRATOR = 'clearswap'
  */
 export const ROUTER_API = 'https://li.quest/v1'
 
-/** Optional API key. Public rate limits apply without one. */
-export const ROUTER_API_KEY = import.meta.env?.VITE_ROUTER_API_KEY ?? ''
+/**
+ * Optional API key. Public rate limits apply without one.
+ *
+ * Read through a function rather than exported as a constant because the embed
+ * build is handed its key at mount time by the host page, which has not run yet
+ * when this module is first evaluated.
+ */
+let runtimeRouterApiKey = ''
+
+export function setRouterApiKey(key: string): void {
+  runtimeRouterApiKey = key
+}
+
+export function routerApiKey(): string {
+  return runtimeRouterApiKey || import.meta.env?.VITE_ROUTER_API_KEY || ''
+}
 
 /** Default max slippage, as a fraction. 0.005 = 0.5%. */
 export const DEFAULT_SLIPPAGE = 0.005

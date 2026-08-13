@@ -80,7 +80,29 @@ Chains that fail to respond are reported as **failed**, not as zero. "You have n
 
 Because the registry supplies RPC URLs and explorer links for every chain in the dataset, the app can add an unfamiliar network to a wallet (`wallet_addEthereumChain`) and link receipts to a real explorer without hardcoding anything.
 
-### Moving this app to another repository
+### Dropping it into another site
+
+`npm run build:embed` produces a single self-contained file, `dist-embed/clearswap.js` (~1.2 MB, ~274 KB gzipped — it bundles React, viem and the chain registry so the host needs nothing).
+
+Serve it as a static asset and add two lines to any page — a Jinja template, a Django template, a plain HTML file, or a JS app:
+
+```html
+<div data-clearswap></div>
+<script src="/static/clearswap.js"></script>
+```
+
+Or mount it yourself, for hosts that render after load:
+
+```js
+Clearswap.mount('#trade', { routerApiKey: 'optional-key' })
+Clearswap.unmount('#trade')   // for single-page hosts navigating away
+```
+
+Everything renders inside a **shadow root**. That matters because this widget ships opinionated global styles for elements as common as `section`, `button` and `input`, and those would wreck a host page if they escaped. The isolation is mutual — verified against a host page that sets `section { background: #ff00aa !important }` and `.trade { display: none !important }`: the widget rendered correctly and the host's own styling was untouched.
+
+There is no build-time coupling to the host. A Python-served site needs no bundler, no npm install, and no framework agreement — just the file.
+
+### Moving the source into another repository
 
 `app/` has no dependency on the surrounding repository at runtime, and only a soft one at build time. The registry generator looks for the dataset in this order:
 
