@@ -150,6 +150,7 @@ npx prettier --write _data/*/*.json
  * [chainlist.simplr.sh - Info packaged single pager](https://chainlist.simplr.sh)
 
 ### Other
+ * [Clearswap](app/README.md) - a trading interface in this repo that itemises every fee and bridges inside the trade, using `_data/chains` as its chain registry
  * [FaucETH](https://github.com/komputing/FaucETH)
  * [Sourcify playground](https://playground.sourcify.dev)
  * [Smart Contract UI](https://xtools-at.github.io/smartcontract-ui)

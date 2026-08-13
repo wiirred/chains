@@ -1,0 +1,28 @@
+{
+  "name": "@ethereum-lists/clearswap",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "A crypto trading interface where every fee is itemised and bridging happens inside the trade.",
+  "scripts": {
+    "registry": "node scripts/build-chain-registry.mjs",
+    "dev": "npm run registry && vite",
+    "build": "npm run registry && tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "npm run registry && vitest run",
+    "typecheck": "npm run registry && tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "viem": "^2.55.13"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.0.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
+  }
+}

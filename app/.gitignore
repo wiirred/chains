@@ -1,0 +1,4 @@
+node_modules
+dist
+# Derived from _data/chains by scripts/build-chain-registry.mjs on every build.
+src/generated
